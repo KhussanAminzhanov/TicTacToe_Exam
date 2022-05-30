@@ -1,5 +1,6 @@
 package com.example.tictactoe
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
@@ -8,11 +9,12 @@ class MainViewModel : ViewModel() {
 
     fun mark(index: Int, isCross: Boolean) {
         field[index] = isCross
+        printField()
     }
 
     fun hasWon(isCross: Boolean): Boolean {
         val length = 3
-        return checkRows(isCross, length, length - 1)
+        return checkRow(isCross, length, 0)
     }
 
     private fun checkDiagonal(isCross: Boolean, length: Int): Boolean {
@@ -57,11 +59,15 @@ class MainViewModel : ViewModel() {
     }
 
     private fun printField() {
-        val text = ""
+        var text = "    \n"
+        var count = 0
         repeat(3) {
             repeat(3) {
-
+                text += "${field[count]}\t"
+                count++
             }
+            text += '\n'
         }
+        Log.i("model", text)
     }
 }
