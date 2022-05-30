@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="cell_normal">#E0DBD7</color>
+    <color name="cell_crosses">#6DC0FC</color>
+    <color name="cell_noughts">#E557BE</color>
 </resources>
