@@ -1,43 +1,28 @@
 package com.example.tictactoe
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-    private val field = Array<Boolean?>(9) { null }
+    private val length = 3
+    private val field = Array<Boolean?>(length * length) { null }
+    var isCross = true
 
-    fun mark(index: Int, isCross: Boolean) {
+    private val _isGameOver = MutableLiveData(false)
+    val isGameOver: LiveData<Boolean> = _isGameOver
+
+    fun mark(index: Int) {
         field[index] = isCross
-        printField()
+        hasWon()
     }
 
-    fun hasWon(isCross: Boolean): Boolean {
-        val length = 3
-        return checkRow(isCross, length, 0)
-    }
-
-    private fun checkDiagonal(isCross: Boolean, length: Int): Boolean {
-        val indices = getDiagonal(0, length * length, length + 1)
-        for (i in indices) if (field[i] != isCross) return false
-        return true
-    }
-
-    private fun checkReverseDiagonal(isCross: Boolean, length: Int): Boolean {
-        val indices = getDiagonal(length - 1, (length - 1) * length + 1, length - 1)
-        for (i in indices) if (field[i] != isCross) return false
-        return true
-    }
-
-    private fun checkRow(isCross: Boolean, length: Int, row: Int): Boolean {
-        val indices = getRow(row, length)
-        for (i in indices) if (field[i] != isCross) return false
-        return true
-    }
-
-    private fun checkRows(isCross: Boolean, length: Int, row: Int): Boolean {
-        if (row == 0) return checkRow(isCross, length, row)
-        return checkRows(isCross, length, row - 1) || checkRow(isCross, length, row)
+    fun hasWon() {
+        if (checkDiagonal() || checkReverseDiagonal() || checkRows(length - 1) || checkColumns(length - 1)) {
+            _isGameOver.value = true
+        }
     }
 
     private fun getDiagonal(start: Int, end: Int, step: Int): List<Int> {
@@ -46,23 +31,72 @@ class MainViewModel : ViewModel() {
         return list
     }
 
-    private fun getRow(row: Int, length: Int): List<Int> {
+    private fun checkDiagonal(): Boolean {
+        val indices = getDiagonal(0, length * length, length + 1)
+        for (i in indices) {
+            Log.i("model", "checkDiagonal($i): value = ${field[i]}  isCross = $isCross")
+            if (field[i] != isCross) return false
+        }
+        return true
+    }
+
+    private fun checkReverseDiagonal(): Boolean {
+        val indices = getDiagonal(length - 1, (length - 1) * length + 1, length - 1)
+        for (i in indices) {
+            Log.i("model", "checkReverseDiagonal($i): value = ${field[i]}  isCross = $isCross")
+            if (field[i] != isCross) return false
+        }
+        return true
+    }
+
+    private fun getRow(row: Int): List<Int> {
         val list = mutableListOf<Int>()
-        repeat(length) { print("${(row * length) + it}\t") }
+        repeat(length) { list.add((row * length) + it) }
         return list
     }
 
-    private fun getColumn(column: Int, length: Int): List<Int> {
+    private fun checkRow(row: Int): Boolean {
+        val indices = getRow(row)
+        for (i in indices) {
+            Log.i("model", "checkRow(row=$row,column=$i): value = ${field[i]} isCross = $isCross")
+            if (field[i] != isCross) return false
+        }
+        return true
+    }
+
+    private fun checkRows(row: Int): Boolean {
+        if (row == 0) return checkRow(row)
+        return checkRows(row - 1) || checkRow(row)
+    }
+
+    private fun getColumn(column: Int): List<Int> {
         val list = mutableListOf<Int>()
-        repeat(length) { print("${it * length + column}\t") }
+        repeat(length) { list.add(it * length + column) }
         return list
+    }
+
+    private fun checkColumn(column: Int): Boolean {
+        val indices = getColumn(column)
+        for (i in indices) {
+            Log.i(
+                "model",
+                "checkColumn(column=$column,row=$i): value = ${field[i]} isCross = $isCross"
+            )
+            if (field[i] != isCross) return false
+        }
+        return true
+    }
+
+    private fun checkColumns(column: Int): Boolean {
+        if (column == 0) return checkColumn(column)
+        return checkColumns(column - 1) || checkColumn(column)
     }
 
     private fun printField() {
         var text = "    \n"
         var count = 0
-        repeat(3) {
-            repeat(3) {
+        repeat(length) {
+            repeat(length) {
                 text += "${field[count]}\t"
                 count++
             }
