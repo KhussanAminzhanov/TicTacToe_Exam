@@ -40,7 +40,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         model.isGameOver.observe(this) {
-            if (it) cell.isClickable = false
+            if (it) {
+                NewGameDialogFragment().show(supportFragmentManager, NewGameDialogFragment.TAG)
+                cell.isClickable = false
+            }
         }
 
         return cell

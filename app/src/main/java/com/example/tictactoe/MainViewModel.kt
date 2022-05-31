@@ -19,8 +19,12 @@ class MainViewModel : ViewModel() {
         hasWon()
     }
 
-    fun hasWon() {
-        if (checkDiagonal() || checkReverseDiagonal() || checkRows(length - 1) || checkColumns(length - 1)) {
+    private fun hasWon() {
+        if (checkDiagonal()
+            || checkReverseDiagonal()
+            || checkRows(length - 1)
+            || checkColumns(length - 1)
+        ) {
             _isGameOver.value = true
         }
     }
@@ -34,7 +38,6 @@ class MainViewModel : ViewModel() {
     private fun checkDiagonal(): Boolean {
         val indices = getDiagonal(0, length * length, length + 1)
         for (i in indices) {
-            Log.i("model", "checkDiagonal($i): value = ${field[i]}  isCross = $isCross")
             if (field[i] != isCross) return false
         }
         return true
@@ -43,7 +46,6 @@ class MainViewModel : ViewModel() {
     private fun checkReverseDiagonal(): Boolean {
         val indices = getDiagonal(length - 1, (length - 1) * length + 1, length - 1)
         for (i in indices) {
-            Log.i("model", "checkReverseDiagonal($i): value = ${field[i]}  isCross = $isCross")
             if (field[i] != isCross) return false
         }
         return true
@@ -58,7 +60,6 @@ class MainViewModel : ViewModel() {
     private fun checkRow(row: Int): Boolean {
         val indices = getRow(row)
         for (i in indices) {
-            Log.i("model", "checkRow(row=$row,column=$i): value = ${field[i]} isCross = $isCross")
             if (field[i] != isCross) return false
         }
         return true
@@ -78,10 +79,6 @@ class MainViewModel : ViewModel() {
     private fun checkColumn(column: Int): Boolean {
         val indices = getColumn(column)
         for (i in indices) {
-            Log.i(
-                "model",
-                "checkColumn(column=$column,row=$i): value = ${field[i]} isCross = $isCross"
-            )
             if (field[i] != isCross) return false
         }
         return true
@@ -90,18 +87,5 @@ class MainViewModel : ViewModel() {
     private fun checkColumns(column: Int): Boolean {
         if (column == 0) return checkColumn(column)
         return checkColumns(column - 1) || checkColumn(column)
-    }
-
-    private fun printField() {
-        var text = "    \n"
-        var count = 0
-        repeat(length) {
-            repeat(length) {
-                text += "${field[count]}\t"
-                count++
-            }
-            text += '\n'
-        }
-        Log.i("model", text)
     }
 }
