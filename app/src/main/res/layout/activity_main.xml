@@ -41,4 +41,8 @@
         tools:background="@color/black"
         tools:padding="20dp" />
 
+    <include
+        android:id="@+id/alert"
+        layout="@layout/alert" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,4 +2,6 @@
     <string name="app_name">Tic Tac Toe</string>
     <string name="tic_tac_toe">Tic Tac Toe</string>
     <string name="restart">Restart</string>
+    <string name="turn">Turn: %s</string>
+    <string name="alert_message">%s won!</string>
 </resources>

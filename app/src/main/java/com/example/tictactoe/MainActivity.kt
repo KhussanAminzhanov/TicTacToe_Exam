@@ -1,6 +1,7 @@
 package com.example.tictactoe
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         model = ViewModelProvider(this)[MainViewModel::class.java]
         setContentView(binding.root)
+
+        binding.alert.linearLayoutCompatAlert.visibility = View.GONE
         addCells()
     }
 
@@ -30,18 +33,19 @@ class MainActivity : AppCompatActivity() {
         val cell = layoutInflater.inflate(R.layout.btn_cell, null) as Button
         cell.setOnClickListener {
             model.mark(id)
-            if (model.isCross) {
+            if (model.isCrossTurn.value!!) {
                 changeBackground(cell, R.drawable.btn_cell_crosses, "X")
             } else {
                 changeBackground(cell, R.drawable.btn_cell_noughts, "O")
             }
             cell.isClickable = false
-            model.isCross = !model.isCross
         }
 
         model.isGameOver.observe(this) {
             if (it) {
-                NewGameDialogFragment().show(supportFragmentManager, NewGameDialogFragment.TAG)
+                val winner = if (model.isCrossTurn.value!!) "Crosses" else "Noughts"
+                binding.alert.textViewAlertMessage.text = getString(R.string.alert_message, winner)
+                binding.alert.linearLayoutCompatAlert.visibility = View.VISIBLE
                 cell.isClickable = false
             }
         }
