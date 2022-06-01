@@ -90,4 +90,10 @@ class MainViewModel : ViewModel() {
         if (column == 0) return checkColumn(column)
         return checkColumns(column - 1) || checkColumn(column)
     }
+
+    fun resetField() {
+        field.forEachIndexed { index, _ -> field[index] = null }
+        _isCrossTurn.value = false
+        _isGameOver.value = false
+    }
 }

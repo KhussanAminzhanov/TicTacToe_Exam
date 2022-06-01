@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/text_view_app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -20,16 +20,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/text_view_turn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/grid_layout_field"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_app_name"
         tools:text="Round: Noughts" />
 
     <GridLayout
-        android:id="@+id/gridLayout"
+        android:id="@+id/grid_layout_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="3"
