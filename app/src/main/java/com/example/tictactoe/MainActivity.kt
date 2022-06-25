@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
+import com.example.tictactoe.MainViewModel.Companion.GRID_LENGTH
 import com.example.tictactoe.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -18,15 +19,35 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        model = ViewModelProvider(this)[MainViewModel::class.java]
         setContentView(binding.root)
 
+        binding.gridLayoutField.columnCount = GRID_LENGTH
         binding.alert.btnRestartGame.setOnClickListener { restartGame() }
 
+        model = ViewModelProvider(this)[MainViewModel::class.java]
         model.isCrossTurn.observe(this) {
             val isNotCrossTurn = model.isCrossTurn.value ?: false
             val whoTurn = if (isNotCrossTurn) "Noughts" else "Crosses"
             binding.textViewTurn.text = getString(R.string.turn, whoTurn)
+        }
+
+        model.isGameOver.observe(this) {
+            Log.i("activity", "isGameOver observer called")
+            if (it != MainViewModel.GameState.UNDEFINED) {
+                val message = when (it) {
+                    MainViewModel.GameState.CROSSES_WON -> getString(R.string.alert_message, "Crosses")
+                    MainViewModel.GameState.NOUGHTS_WON -> getString(R.string.alert_message, "Noughts")
+                    MainViewModel.GameState.DRAW -> "It is Draw!"
+                    else -> ""
+                }
+                binding.alert.textViewAlertMessage.text = message
+                binding.alert.linearLayoutCompatAlert.visibility = View.VISIBLE
+                binding.gridLayoutField.forEach { button ->
+                    (button as Button).isClickable = false
+                }
+            } else {
+                binding.alert.linearLayoutCompatAlert.visibility = View.GONE
+            }
         }
 
         addCells()
@@ -43,7 +64,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addCells() {
-        repeat(9) { binding.gridLayoutField.addView(getCell(it)) }
+        val numberCells = GRID_LENGTH * GRID_LENGTH
+        repeat(numberCells) { binding.gridLayoutField.addView(getCell(it)) }
     }
 
     private fun getCell(id: Int): Button {
@@ -57,19 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
             cell.isClickable = false
         }
-
-        model.isGameOver.observe(this) {
-            Log.i("activity", "isGameOver observer called")
-            if (it) {
-                val winner = if (model.isCrossTurn.value!!) "Crosses" else "Noughts"
-                binding.alert.textViewAlertMessage.text = getString(R.string.alert_message, winner)
-                binding.alert.linearLayoutCompatAlert.visibility = View.VISIBLE
-                cell.isClickable = false
-            } else {
-                binding.alert.linearLayoutCompatAlert.visibility = View.GONE
-            }
-        }
-
         return cell
     }
 
